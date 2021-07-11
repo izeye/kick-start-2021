@@ -39,7 +39,7 @@ public abstract class AbstractSolutionTests {
     }
 
     private FileInputStream getTestInputStream() throws FileNotFoundException {
-        String inputFilePath = "src/test/resources/" + getClass().getPackageName().replace('.', '/') + "/input.txt";
+        String inputFilePath = "src/test/resources/" + getClass().getPackageName().replace('.', '/') + "/sample/input.txt";
         return new FileInputStream(inputFilePath);
     }
 
@@ -55,7 +55,7 @@ public abstract class AbstractSolutionTests {
     }
 
     private String getExpectedOutput() throws IOException {
-        String outputFilePath = "src/test/resources/" + getClass().getPackageName().replace('.', '/') + "/output.txt";
+        String outputFilePath = "src/test/resources/" + getClass().getPackageName().replace('.', '/') + "/sample/output.txt";
         return Files.readString(Path.of(outputFilePath));
     }
 
