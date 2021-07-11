@@ -1,7 +1,6 @@
 package kickstart.year2020.rounda.problem1;
 
 import kickstart.AbstractSolutionTests;
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Solution}.
@@ -10,8 +9,8 @@ import org.junit.jupiter.api.Test;
  */
 class SolutionTests extends AbstractSolutionTests {
 
-    @Test
-    void sample()  {
+    @Override
+    protected void doTest() {
         Solution.main(new String[0]);
     }
 

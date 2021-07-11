@@ -1,7 +1,7 @@
 package kickstart;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -27,10 +27,44 @@ public abstract class AbstractSolutionTests {
 
     private ByteArrayOutputStream outputStream;
 
-    // @BeforeAll is better here, but it doesn't fit well with the inheritance.
-    @BeforeEach
-    void beforeEach() throws FileNotFoundException {
-        FileInputStream testInput = getTestInputStream();
+    @Test
+    void runAgainstSample() throws IOException {
+        run(TestTarget.SAMPLE);
+    }
+
+    private void run(TestTarget target) throws IOException {
+        prepare(target);
+        doTest();
+        verifyAndCleanUp(target);
+    }
+
+    @Test
+    void runAgainstTestSet1() throws IOException {
+        try {
+            run(TestTarget.TEST_SET_1);
+        }
+        catch (FileNotFoundException ex) {
+            disable();
+        }
+    }
+
+    private void disable() {
+        // Better way to disable a test?
+        Assumptions.assumeTrue(false);
+    }
+
+    @Test
+    void runAgainstTestSet2() throws IOException {
+        try {
+            run(TestTarget.TEST_SET_2);
+        }
+        catch (FileNotFoundException ex) {
+            disable();
+        }
+    }
+
+    private void prepare(TestTarget target) throws FileNotFoundException {
+        FileInputStream testInput = getTestInputStream(target);
         this.outputStream = new ByteArrayOutputStream();
         PrintStream testOutput = new PrintStream(this.outputStream);
 
@@ -38,25 +72,37 @@ public abstract class AbstractSolutionTests {
         System.setOut(testOutput);
     }
 
-    private FileInputStream getTestInputStream() throws FileNotFoundException {
-        String inputFilePath = "src/test/resources/" + getClass().getPackageName().replace('.', '/') + "/sample/input.txt";
-        return new FileInputStream(inputFilePath);
-    }
+    protected abstract void doTest();
 
-    // @AfterAll is better here, but it doesn't fit well with the inheritance.
-    @AfterEach
-    void afterEach() throws IOException {
+    private void verifyAndCleanUp(TestTarget target) throws IOException {
         System.setIn(standardInput);
         System.setOut(standardOutput);
 
         String output = this.outputStream.toString(StandardCharsets.UTF_8);
-        String expectedOutput = getExpectedOutput();
+        String expectedOutput = getExpectedOutput(target);
         assertThat(output).isEqualTo(expectedOutput);
     }
 
-    private String getExpectedOutput() throws IOException {
-        String outputFilePath = "src/test/resources/" + getClass().getPackageName().replace('.', '/') + "/sample/output.txt";
+    private FileInputStream getTestInputStream(TestTarget target) throws FileNotFoundException {
+        String inputFilePath = getFilePath(target, "input.txt");
+        return new FileInputStream(inputFilePath);
+    }
+
+    private String getFilePath(TestTarget target, String filename) {
+        return "src/test/resources/" + getClass().getPackageName().replace('.', '/') + "/" + target.name().toLowerCase() + "/" + filename;
+    }
+
+    private String getExpectedOutput(TestTarget target) throws IOException {
+        String outputFilePath = getFilePath(target, "output.txt");
         return Files.readString(Path.of(outputFilePath));
     }
+
+}
+
+enum TestTarget {
+
+    SAMPLE,
+    TEST_SET_1,
+    TEST_SET_2
 
 }
