@@ -1,7 +1,8 @@
 package kickstart.year2021.roundd.problem2;
 
-import java.util.Arrays;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 /**
  * Solution for Cutting Intervals - Round D 2021 - Kick Start 2021.
@@ -17,56 +18,51 @@ public class Solution {
             int cases = in.nextInt();
             for (int t = 1; t <= cases; t++) {
                 int n = in.nextInt();
-                int c = in.nextInt();
-                int[][] intervals = new int[n][2];
+                long c = in.nextLong();
+                long[][] intervals = new long[n][2];
                 for (int i = 0; i < intervals.length; i++) {
                     for (int j = 0; j < intervals[i].length; j++) {
-                        intervals[i][j] = in.nextInt();
+                        intervals[i][j] = in.nextLong();
                     }
                 }
 
-                int answer = getAnswer(n, c, intervals);
+                Map<Long, MutableInteger> map = new TreeMap<>();
+                for (long[] interval : intervals) {
+                    MutableInteger valueToIncrease = map.computeIfAbsent(interval[0] + 1, (k) -> new MutableInteger());
+                    valueToIncrease.value++;
+                    MutableInteger valueToDecrease = map.computeIfAbsent(interval[1], (k) -> new MutableInteger());
+                    valueToDecrease.value--;
+                }
+
+                long[] array = new long[n + 1];
+                Long previousKey = null;
+                int current = 0;
+                for (var entry : map.entrySet()) {
+                    Long key = entry.getKey();
+                    if (previousKey != null) {
+                        array[current] += key - previousKey;
+                    }
+                    current += entry.getValue().value;
+                    previousKey = key;
+                }
+
+                long answer = n;
+                long cut = 0;
+                for (int i = array.length - 1; i >= 0; i--) {
+                    long thisCut = Math.min(array[i], c - cut);
+                    answer += i * thisCut;
+                    cut += thisCut;
+                    if (cut > c) {
+                        break;
+                    }
+                }
                 System.out.printf("Case #%d: %d%n", t, answer);
             }
         }
     }
 
-    private static int getAnswer(int n, int c, int[][] intervals) {
-        int min = 10_000;
-        int max = 1;
-        for (int i = 0; i < intervals.length; i++) {
-            min = Math.min(min, intervals[i][0]);
-            max = Math.max(max, intervals[i][1]);
-        }
-
-        int[] intervalCounts = new int[max - min - 1];
-        for (int i = min + 1; i < max; i++) {
-            int intervalCount = getIntervalCount(intervals, i);
-            intervalCounts[i - min - 1] = intervalCount;
-        }
-
-        Arrays.sort(intervalCounts);
-
-        int sum = 0;
-        int cuts = 0;
-        for (int i = intervalCounts.length - 1; i >= 0; i--) {
-            sum += intervalCounts[i];
-            cuts++;
-            if (cuts == c) {
-                break;
-            }
-        }
-        return sum + n;
-    }
-
-    private static int getIntervalCount(int[][] intervals, int cut) {
-        int answer = 0;
-        for (int j = 0; j < intervals.length; j++) {
-            if (cut > intervals[j][0] && cut < intervals[j][1]) {
-                answer++;
-            }
-        }
-        return answer;
+    static class MutableInteger {
+        int value;
     }
 
 }

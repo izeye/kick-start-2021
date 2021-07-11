@@ -1,6 +1,7 @@
 package kickstart;
 
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -53,6 +54,8 @@ public abstract class AbstractSolutionTests {
         Assumptions.assumeTrue(false);
     }
 
+    // Enable only if necessary as this is too slow.
+    @Disabled
     @Test
     void runAgainstTestSet2() throws IOException {
         try {
