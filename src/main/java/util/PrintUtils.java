@@ -14,7 +14,20 @@ public final class PrintUtils {
         System.out.println();
     }
 
+    public static void print(long[] data) {
+        for (int i = 0; i < data.length; i++) {
+            System.out.print(data[i] + " ");
+        }
+        System.out.println();
+    }
+
     public static void print(int[][] data) {
+        for (int i = 0; i < data.length; i++) {
+            print(data[i]);
+        }
+    }
+
+    public static void print(long[][] data) {
         for (int i = 0; i < data.length; i++) {
             print(data[i]);
         }
