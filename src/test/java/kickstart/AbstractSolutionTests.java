@@ -38,9 +38,6 @@ public abstract class AbstractSolutionTests {
         System.setOut(testOutput);
     }
 
-    private void prepareForSamples() throws FileNotFoundException {
-    }
-
     private FileInputStream getTestInputStream() throws FileNotFoundException {
         String inputFilePath = "src/test/resources/" + getClass().getPackageName().replace('.', '/') + "/input.txt";
         return new FileInputStream(inputFilePath);
