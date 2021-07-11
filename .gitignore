@@ -4,3 +4,5 @@ build
 
 # This is necessary as there's 100 MB limit on GitHub.
 test_set_2
+
+.DS_Store
